@@ -3,13 +3,422 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>datac.me</title>
+  <title>datac.me — AI Platform</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Puter.js SDK -->
+  <script src="https://js.puter.com/v2/"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            surface: {
+              950: '#07090e',
+              900: '#0d1117',
+              850: '#131822',
+              800: '#1b2230',
+              700: '#283347'
+            }
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'slide-up': 'slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'pulse-glow': 'pulseGlow 2.5s infinite ease-in-out'
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0', transform: 'scale(0.98)' },
+              '100%': { opacity: '1', transform: 'scale(1)' }
+            },
+            slideUp: {
+              '0%': { opacity: '0', transform: 'translateY(12px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' }
+            },
+            pulseGlow: {
+              '0%, 100%': { opacity: '0.4' },
+              '50%': { opacity: '0.85' }
+            }
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
-    body { font-family: sans-serif; display: grid; place-items: center; height: 100vh; margin: 0; background: #0f172a; color: white; }
-    h1 { font-size: 3rem; }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
+
+    .glass-panel {
+      background: rgba(13, 17, 23, 0.75);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    
+    .glass-input {
+      background: rgba(19, 24, 34, 0.6);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .dropdown-scroll {
+      max-height: 380px;
+      overflow-y: auto;
+    }
   </style>
 </head>
-<body>
-  <h1>Welcome to datac.me</h1>
+<body class="bg-surface-950 text-slate-200 antialiased h-screen flex overflow-hidden font-sans select-none">
+
+  <!-- Ambient Dynamic Glow Background -->
+  <div id="ambient-glow" class="fixed top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-cyan-500/10 blur-[130px] rounded-full pointer-events-none transition-all duration-700"></div>
+
+  <!-- ==================== SIDEBAR ==================== -->
+  <aside id="sidebar" class="w-64 glass-panel border-r border-white/5 flex flex-col justify-between transition-all duration-300 ease-in-out z-20 shrink-0">
+    <!-- Top Section -->
+    <div class="p-4 flex flex-col h-full overflow-hidden">
+      <!-- Brand & Collapser -->
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-cyan-500/20">
+            <i data-lucide="sparkles" class="w-4 h-4 text-white"></i>
+          </div>
+          <span class="font-bold tracking-tight text-white text-lg">datac<span class="text-cyan-400">.me</span></span>
+        </div>
+        <button id="toggle-sidebar" class="p-1.5 rounded-lg hover:bg-white/5 text-slate-400 hover:text-white transition-colors">
+          <i data-lucide="panel-left-close" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- New Chat Button -->
+      <button class="w-full py-2.5 px-3 rounded-xl glass-input hover:border-cyan-500/40 text-sm font-medium flex items-center gap-2.5 text-slate-200 hover:text-white transition-all duration-200 group shadow-sm mb-4">
+        <i data-lucide="plus" class="w-4 h-4 text-cyan-400 group-hover:rotate-90 transition-transform duration-300"></i>
+        <span>New Thread</span>
+        <span class="ml-auto text-[10px] text-slate-500 bg-white/5 px-1.5 py-0.5 rounded border border-white/5">⌘K</span>
+      </button>
+
+      <!-- History Header & Scrollable List -->
+      <div class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider px-1 mb-2">Recent Sessions</div>
+      <div class="flex-1 overflow-y-auto space-y-1 pr-1">
+        <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-colors group">
+          <i data-lucide="message-square" class="w-4 h-4 text-slate-500 group-hover:text-cyan-400"></i>
+          <span class="truncate">Autonomous Agent Flow</span>
+        </a>
+        <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-colors group">
+          <i data-lucide="brain-circuit" class="w-4 h-4 text-slate-500 group-hover:text-purple-400"></i>
+          <span class="truncate">DeepSeek R1 Math Proof</span>
+        </a>
+        <a href="#" class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-colors group">
+          <i data-lucide="image" class="w-4 h-4 text-slate-500 group-hover:text-amber-400"></i>
+          <span class="truncate">Cyberpunk Visual Render</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- User / Puter Footer Profile -->
+    <div class="p-3 border-t border-white/5">
+      <div class="flex items-center justify-between p-2 rounded-xl hover:bg-white/5 transition-colors cursor-pointer">
+        <div class="flex items-center gap-2.5">
+          <div class="w-7 h-7 rounded-full bg-slate-800 border border-white/10 flex items-center justify-center text-xs font-bold text-cyan-400">
+            P
+          </div>
+          <div class="flex flex-col">
+            <span class="text-xs font-medium text-slate-200">Puter Cloud</span>
+            <span class="text-[10px] text-emerald-400 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Connected
+            </span>
+          </div>
+        </div>
+        <i data-lucide="settings" class="w-4 h-4 text-slate-400 hover:text-white"></i>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ==================== MAIN WORKSPACE ==================== -->
+  <main class="flex-1 flex flex-col h-full relative overflow-hidden">
+    
+    <!-- Top Navigation Bar -->
+    <header class="h-16 border-b border-white/5 glass-panel flex items-center justify-between px-6 z-10 shrink-0">
+      <div class="flex items-center gap-3">
+        <!-- Re-open sidebar button (hidden when sidebar is visible) -->
+        <button id="open-sidebar" class="hidden p-2 rounded-lg hover:bg-white/5 text-slate-400 hover:text-white">
+          <i data-lucide="panel-left-open" class="w-5 h-5"></i>
+        </button>
+
+        <!-- ==================== MODEL SELECTOR DROPDOWN ==================== -->
+        <div class="relative">
+          <button id="model-dropdown-btn" class="flex items-center gap-2 px-3 py-1.5 rounded-xl glass-input hover:border-cyan-500/40 text-sm font-medium transition-all group">
+            <span id="current-model-badge" class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+            <span id="current-model-name" class="font-medium text-slate-100">DeepSeek R1</span>
+            <span id="current-model-tag" class="text-[10px] bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded border border-purple-500/30 font-semibold">Reasoning</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 group-hover:text-white transition-transform duration-200"></i>
+          </button>
+
+          <!-- Dropdown Menu Box -->
+          <div id="model-dropdown-menu" class="hidden absolute left-0 mt-2 w-80 glass-panel rounded-2xl shadow-2xl p-2 z-50 border border-white/10 animate-fade-in dropdown-scroll">
+            
+            <!-- Category: Reasoning Models -->
+            <div class="px-2 py-1.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+              <i data-lucide="brain-circuit" class="w-3.5 h-3.5 text-purple-400"></i> Reasoning Engines
+            </div>
+            <div class="space-y-0.5 mb-2">
+              <button onclick="selectModel('DeepSeek R1', 'Reasoning', 'purple')" class="w-full text-left p-2 rounded-xl hover:bg-white/5 flex items-center justify-between group transition-colors">
+                <div>
+                  <div class="text-sm font-medium text-white group-hover:text-purple-300">DeepSeek R1</div>
+                  <div class="text-[11px] text-slate-400">Deep chain-of-thought analysis</div>
+                </div>
+                <span class="text-[10px] bg-purple-500/10 text-purple-300 px-1.5 py-0.5 rounded border border-purple-500/20">671B</span>
+              </button>
+              <button onclick="selectModel('o1-Preview', 'Reasoning', 'purple')" class="w-full text-left p-2 rounded-xl hover:bg-white/5 flex items-center justify-between group transition-colors">
+                <div>
+                  <div class="text-sm font-medium text-white group-hover:text-purple-300">o1-Preview</div>
+                  <div class="text-[11px] text-slate-400">Complex logic and formal proofs</div>
+                </div>
+              </button>
+            </div>
+
+            <!-- Category: Autonomous Agents -->
+            <div class="px-2 py-1.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 border-t border-white/5 pt-2">
+              <i data-lucide="bot" class="w-3.5 h-3.5 text-emerald-400"></i> Autonomous Agents
+            </div>
+            <div class="space-y-0.5 mb-2">
+              <button onclick="selectModel('AutoCoder Agent', 'Agent', 'emerald')" class="w-full text-left p-2 rounded-xl hover:bg-white/5 flex items-center justify-between group transition-colors">
+                <div>
+                  <div class="text-sm font-medium text-white group-hover:text-emerald-300">AutoCoder Agent</div>
+                  <div class="text-[11px] text-slate-400">Multi-file coding & tool execution</div>
+                </div>
+                <span class="text-[10px] bg-emerald-500/10 text-emerald-300 px-1.5 py-0.5 rounded border border-emerald-500/20">Active</span>
+              </button>
+              <button onclick="selectModel('Web Search Agent', 'Agent', 'emerald')" class="w-full text-left p-2 rounded-xl hover:bg-white/5 flex items-center justify-between group transition-colors">
+                <div>
+                  <div class="text-sm font-medium text-white group-hover:text-emerald-300">Web Search Agent</div>
+                  <div class="text-[11px] text-slate-400">Live internet browsing & extraction</div>
+                </div>
+              </button>
+            </div>
+
+            <!-- Category: Speed & General Chat -->
+            <div class="px-2 py-1.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 border-t border-white/5 pt-2">
+              <i data-lucide="zap" class="w-3.5 h-3.5 text-cyan-400"></i> Fast & General
+            </div>
+            <div class="space-y-0.5 mb-2">
+              <button onclick="selectModel('Claude 3.5 Sonnet', 'Chat', 'cyan')" class="w-full text-left p-2 rounded-xl hover:bg-white/5 flex items-center justify-between group transition-colors">
+                <div>
+                  <div class="text-sm font-medium text-white group-hover:text-cyan-300">Claude 3.5 Sonnet</div>
+                  <div class="text-[11px] text-slate-400">Top-tier intelligence & code</div>
+                </div>
+                <span class="text-[10px] bg-cyan-500/10 text-cyan-300 px-1.5 py-0.5 rounded border border-cyan-500/20">Fast</span>
+              </button>
+              <button onclick="selectModel('GPT-4o', 'Chat', 'cyan')" class="w-full text-left p-2 rounded-xl hover:bg-white/5 flex items-center justify-between group transition-colors">
+                <div>
+                  <div class="text-sm font-medium text-white group-hover:text-cyan-300">GPT-4o</div>
+                  <div class="text-[11px] text-slate-400">Omni multimodal general model</div>
+                </div>
+              </button>
+            </div>
+
+            <!-- Category: Vision & Image -->
+            <div class="px-2 py-1.5 text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 border-t border-white/5 pt-2">
+              <i data-lucide="image" class="w-3.5 h-3.5 text-amber-400"></i> Vision & Image
+            </div>
+            <div class="space-y-0.5">
+              <button onclick="selectModel('FLUX.1 Schnell', 'Image', 'amber')" class="w-full text-left p-2 rounded-xl hover:bg-white/5 flex items-center justify-between group transition-colors">
+                <div>
+                  <div class="text-sm font-medium text-white group-hover:text-amber-300">FLUX.1 Schnell</div>
+                  <div class="text-[11px] text-slate-400">High-speed photorealistic generation</div>
+                </div>
+                <span class="text-[10px] bg-amber-500/10 text-amber-300 px-1.5 py-0.5 rounded border border-amber-500/20">Art</span>
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Icons Right -->
+      <div class="flex items-center gap-3">
+        <button class="px-3 py-1.5 rounded-xl glass-input hover:border-white/20 text-xs font-medium text-slate-300 flex items-center gap-2 transition-all">
+          <i data-lucide="share-2" class="w-3.5 h-3.5"></i> Share
+        </button>
+      </div>
+    </header>
+
+    <!-- Message Stream Feed -->
+    <div id="chat-stream" class="flex-1 overflow-y-auto p-6 space-y-6 max-w-4xl w-full mx-auto">
+      
+      <!-- Welcome Hero Prompt (if empty state) -->
+      <div id="empty-state" class="text-center py-16 animate-slide-up">
+        <div class="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4 shadow-xl">
+          <i data-lucide="terminal" class="w-7 h-7 text-cyan-400"></i>
+        </div>
+        <h2 class="text-2xl font-bold text-white tracking-tight mb-2">Puter Unified AI Console</h2>
+        <p class="text-slate-400 text-sm max-w-md mx-auto mb-6">Switch dynamically between reasoning models, autonomous agents, and image generation powered by your Puter server.</p>
+        
+        <!-- Quick Starter Pills -->
+        <div class="flex flex-wrap items-center justify-center gap-2 max-w-lg mx-auto">
+          <button onclick="fillPrompt('Design a multi-agent architectural pipeline.')" class="px-3 py-1.5 rounded-lg glass-input text-xs text-slate-300 hover:border-cyan-500/40 hover:text-white transition-all">
+            "Design a multi-agent pipeline"
+          </button>
+          <button onclick="fillPrompt('DeepSeek: Prove the Riemann hypothesis approximation.')" class="px-3 py-1.5 rounded-lg glass-input text-xs text-slate-300 hover:border-purple-500/40 hover:text-white transition-all">
+            "DeepSeek: Prove hypothesis"
+          </button>
+          <button onclick="fillPrompt('Generate an ultra-realistic cyberpunk city in neon violet.')" class="px-3 py-1.5 rounded-lg glass-input text-xs text-slate-300 hover:border-amber-500/40 hover:text-white transition-all">
+            "Generate cyberpunk render"
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Floating Glass Input Dock -->
+    <div class="p-4 sm:p-6 max-w-4xl w-full mx-auto shrink-0">
+      <div class="glass-input rounded-2xl p-2.5 transition-all duration-300 focus-within:border-cyan-500/50 shadow-2xl relative">
+        <textarea id="prompt-input" rows="2" placeholder="Message DeepSeek R1 or type '/' for agents..." class="w-full bg-transparent resize-none text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none px-3 py-1.5"></textarea>
+        
+        <div class="flex items-center justify-between pt-2 border-t border-white/5 px-2">
+          <div class="flex items-center gap-1">
+            <button class="p-1.5 rounded-lg hover:bg-white/5 text-slate-400 hover:text-white transition-colors" title="Attach file">
+              <i data-lucide="paperclip" class="w-4 h-4"></i>
+            </button>
+            <button class="p-1.5 rounded-lg hover:bg-white/5 text-slate-400 hover:text-white transition-colors" title="Voice prompt">
+              <i data-lucide="mic" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button id="send-btn" class="px-3 py-1.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-medium text-xs flex items-center gap-1.5 transition-all duration-200 shadow-lg shadow-cyan-500/20 active:scale-95">
+              <span>Execute</span>
+              <i data-lucide="arrow-up" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="text-[11px] text-center text-slate-500 mt-2">Running on Puter Server Backend • datac.me</div>
+    </div>
+
+  </main>
+
+  <!-- ==================== UI LOGIC SCRIPT ==================== -->
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Elements
+    const sidebar = document.getElementById('sidebar');
+    const toggleSidebarBtn = document.getElementById('toggle-sidebar');
+    const openSidebarBtn = document.getElementById('open-sidebar');
+    const dropdownBtn = document.getElementById('model-dropdown-btn');
+    const dropdownMenu = document.getElementById('model-dropdown-menu');
+    const ambientGlow = document.getElementById('ambient-glow');
+    const promptInput = document.getElementById('prompt-input');
+    const sendBtn = document.getElementById('send-btn');
+    const chatStream = document.getElementById('chat-stream');
+    const emptyState = document.getElementById('empty-state');
+
+    // Sidebar Toggling
+    toggleSidebarBtn.addEventListener('click', () => {
+      sidebar.classList.add('-ml-64');
+      openSidebarBtn.classList.remove('hidden');
+    });
+
+    openSidebarBtn.addEventListener('click', () => {
+      sidebar.classList.remove('-ml-64');
+      openSidebarBtn.classList.add('hidden');
+    });
+
+    // Model Selector Dropdown Toggling
+    dropdownBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      dropdownMenu.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!dropdownMenu.contains(e.target) && !dropdownBtn.contains(e.target)) {
+        dropdownMenu.classList.add('hidden');
+      }
+    });
+
+    // Model Change Functionality & Dynamic Ambiance
+    function selectModel(name, category, color) {
+      document.getElementById('current-model-name').textContent = name;
+      const tag = document.getElementById('current-model-tag');
+      const badge = document.getElementById('current-model-badge');
+      
+      tag.textContent = category;
+      promptInput.placeholder = `Message ${name} or type '/' for commands...`;
+
+      // Color theming based on model category
+      const colorMap = {
+        purple: { bg: 'bg-purple-500/20', text: 'text-purple-300', border: 'border-purple-500/30', glow: 'bg-purple-500/15', dot: 'bg-purple-400' },
+        emerald: { bg: 'bg-emerald-500/20', text: 'text-emerald-300', border: 'border-emerald-500/30', glow: 'bg-emerald-500/15', dot: 'bg-emerald-400' },
+        cyan: { bg: 'bg-cyan-500/20', text: 'text-cyan-300', border: 'border-cyan-500/30', glow: 'bg-cyan-500/15', dot: 'bg-cyan-400' },
+        amber: { bg: 'bg-amber-500/20', text: 'text-amber-300', border: 'border-amber-500/30', glow: 'bg-amber-500/15', dot: 'bg-amber-400' }
+      };
+
+      const theme = colorMap[color] || colorMap.cyan;
+      tag.className = `text-[10px] px-1.5 py-0.5 rounded font-semibold border ${theme.bg} ${theme.text} ${theme.border}`;
+      badge.className = `w-2 h-2 rounded-full animate-pulse ${theme.dot}`;
+      ambientGlow.className = `fixed top-0 left-1/2 -translate-x-1/2 w-[700px] h-[350px] blur-[130px] rounded-full pointer-events-none transition-all duration-700 ${theme.glow}`;
+
+      dropdownMenu.classList.add('hidden');
+    }
+
+    function fillPrompt(text) {
+      promptInput.value = text;
+      promptInput.focus();
+    }
+
+    // Message Sending Demonstration
+    function sendMessage() {
+      const text = promptInput.value.trim();
+      if (!text) return;
+
+      if (emptyState) emptyState.remove();
+
+      // User Bubble
+      const userMessage = document.createElement('div');
+      userMessage.className = 'flex justify-end animate-slide-up';
+      userMessage.innerHTML = `
+        <div class="bg-cyan-500/15 border border-cyan-500/30 rounded-2xl px-4 py-2.5 max-w-xl text-slate-100 text-sm">
+          ${text}
+        </div>
+      `;
+      chatStream.appendChild(userMessage);
+      promptInput.value = '';
+
+      // AI Response Bubble Placeholder
+      const aiMessage = document.createElement('div');
+      aiMessage.className = 'flex gap-3 animate-slide-up';
+      aiMessage.innerHTML = `
+        <div class="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+          <i data-lucide="sparkles" class="w-4 h-4 text-cyan-400"></i>
+        </div>
+        <div class="glass-panel rounded-2xl p-4 max-w-2xl text-sm text-slate-200 border border-white/5 leading-relaxed">
+          <div class="flex items-center gap-2 mb-2 text-xs font-semibold text-slate-400">
+            <span>Thinking via Puter API...</span>
+          </div>
+          Received prompt: "${text}". Connect your Puter dev endpoint to pipe the live streaming token generation here.
+        </div>
+      `;
+      chatStream.appendChild(aiMessage);
+      lucide.createIcons();
+      chatStream.scrollTop = chatStream.scrollHeight;
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    promptInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+  </script>
 </body>
 </html>
